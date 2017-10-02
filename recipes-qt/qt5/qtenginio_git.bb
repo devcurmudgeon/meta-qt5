@@ -1,14 +1,16 @@
 require qt5.inc
 require qt5-git.inc
 
-LICENSE = "BSD & (LGPL-2.1 & Digia-Qt-LGPL-Exception-1.1 | LGPL-3.0)"
+LICENSE = "GFDL-1.3 & BSD & ( GPL-3.0 & The-Qt-Company-GPL-Exception-1.0 | The-Qt-Company-Commercial ) & ( GPL-2.0+ | LGPL-3.0 | The-Qt-Company-Commercial )"
 LIC_FILES_CHKSUM = " \
-    file://LICENSE.LGPLv21;md5=58a180e1cf84c756c29f782b3a485c29 \
-    file://LICENSE.LGPLv3;md5=c4fe8c6de4eef597feec6e90ed62e962 \
+    file://LICENSE.LGPLv21;md5=4bfd28363f541b10d9f024181b8df516 \
+    file://LICENSE.LGPLv3;md5=e0459b45c5c4840b353141a8bbed91f0 \
+    file://LICENSE.GPLv3;md5=88e2b9117e6be406b5ed6ee4ca99a705 \
     file://LGPL_EXCEPTION.txt;md5=9625233da42f9e0ce9d63651a9d97654 \
+    file://LICENSE.FDL;md5=f70ee9a6c44ae8917586fea34dff0ab5 \
 "
 
 DEPENDS += "qtbase qtdeclarative qtxmlpatterns"
 
-QT_MODULE_BRANCH = "1.2"
-SRCREV = "749bcec16b89269026a2048c7394df74f08935c4"
+QT_MODULE_BRANCH = "dev"
+SRCREV = "0555cf73c8b5abd41d8a4ff02457315c9e7c667d"

@@ -7,16 +7,16 @@ inherit packagegroup
 
 PACKAGEGROUP_DISABLE_COMPLEMENTARY = "1"
 
-# Requires meta-ruby to work
+# Requires Ruby to work
 USE_RUBY = " \
     qtquick1-dev \
     qtquick1-mkspecs \
     qtquick1-plugins \
-    qtquick1-qmlplugins \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qtquick1-qmlplugins', '', d)} \
     qttranslations-qtquick1 \
     qtwebkit-dev \
     qtwebkit-mkspecs \
-    qtwebkit-qmlplugins \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qtwebkit-qmlplugins', '', d)} \
 "
 
 # Requires Wayland to work
@@ -36,11 +36,10 @@ USE_X11 = " \
 RDEPENDS_${PN} += " \
     packagegroup-core-standalone-sdk-target \
     libsqlite3-dev \
-    qt3d-dev \
-    qt3d-mkspecs \
-    qt3d-qmlplugins \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qt3d-dev', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qt3d-mkspecs', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qt3d-qmlplugins', '', d)} \
     qtbase-dev \
-    qtbase-fonts \
     qtbase-mkspecs \
     qtbase-plugins \
     qtbase-staticdev \
@@ -50,30 +49,30 @@ RDEPENDS_${PN} += " \
     qttranslations-qthelp \
     qtconnectivity-dev \
     qtconnectivity-mkspecs \
-    qtconnectivity-qmlplugins \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qtconnectivity-qmlplugins', '', d)} \
     qttranslations-qtconnectivity \
     qtdeclarative-dev \
     qtdeclarative-mkspecs \
-    qtdeclarative-plugins \
-    qtdeclarative-qmlplugins \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qtdeclarative-qmlplugins', '', d)} \
+    qtdeclarative-tools \
     qtdeclarative-staticdev \
     qttranslations-qmlviewer \
     qttranslations-qtdeclarative \
     qtenginio-dev \
     qtenginio-mkspecs \
-    qtenginio-qmlplugins \
-    qtgraphicaleffects-qmlplugins \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qtenginio-qmlplugins', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qtgraphicaleffects-qmlplugins', '', d)} \
     qtimageformats-dev \
     qtimageformats-plugins \
     qtlocation-dev \
     qtlocation-mkspecs \
     qtlocation-plugins \
-    qtlocation-qmlplugins \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qtlocation-qmlplugins', '', d)} \
     qttranslations-qtlocation \
     qtmultimedia-dev \
     qtmultimedia-mkspecs \
     qtmultimedia-plugins \
-    qtmultimedia-qmlplugins \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qtmultimedia-qmlplugins', '', d)} \
     qttranslations-qtmultimedia \
     qtscript-dev \
     qtscript-mkspecs \
@@ -81,34 +80,40 @@ RDEPENDS_${PN} += " \
     qtsensors-dev \
     qtsensors-mkspecs \
     qtsensors-plugins \
-    qtsensors-qmlplugins \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qtsensors-qmlplugins', '', d)} \
     qtserialport-dev \
     qtserialport-mkspecs \
+    qtserialbus-dev \
+    qtserialbus-mkspecs \
     qtsvg-dev \
     qtsvg-mkspecs \
     qtsvg-plugins \
     qtsystems-dev \
     qtsystems-mkspecs \
-    qtsystems-qmlplugins \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qtsystems-qmlplugins', '', d)} \
     qttools-dev \
     qttools-mkspecs \
-    qttools-plugins \
     qttools-staticdev \
     qttools-tools \
-    ${@base_contains('DISTRO_FEATURES', 'wayland', '${USE_WAYLAND}', '', d)} \
-    ${@base_contains('BBFILE_COLLECTIONS', 'ruby-layer', '${USE_RUBY}', '', d)} \
-    ${@base_contains('DISTRO_FEATURES', 'x11', '${USE_X11}', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', '${USE_WAYLAND}', '', d)} \
+    ${USE_RUBY} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'x11', '${USE_X11}', '', d)} \
     qtwebsockets-dev \
     qtwebsockets-mkspecs \
-    qtwebsockets-qmlplugins \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qtwebsockets-qmlplugins', '', d)} \
+    qttranslations-qtwebsockets \
     qtwebchannel-dev \
     qtwebchannel-mkspecs \
-    qtwebchannel-qmlplugins \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qtwebchannel-qmlplugins', '', d)} \
     qtxmlpatterns-dev \
     qtxmlpatterns-mkspecs \
     qttranslations-qtxmlpatterns \
+    qtquickcontrols2 \
+    qtquickcontrols2-dev \
+    qtquickcontrols2-mkspecs \
 "
 
 RRECOMMENDS_${PN} += " \
     qtquickcontrols-qmlplugins \
+    qttools-plugins \
 "

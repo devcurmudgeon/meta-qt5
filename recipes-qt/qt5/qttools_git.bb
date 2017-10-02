@@ -1,27 +1,50 @@
 require qt5.inc
 require qt5-git.inc
 
-LICENSE = "GFDL-1.3 & BSD & (LGPL-2.1 & Digia-Qt-LGPL-Exception-1.1 | LGPL-3.0)"
+HOMEPAGE = "http://www.qt.io"
+LICENSE = "GFDL-1.3 & BSD & ( GPL-3.0 & The-Qt-Company-GPL-Exception-1.0 | The-Qt-Company-Commercial ) & ( GPL-2.0+ | LGPL-3.0 | The-Qt-Company-Commercial )"
 LIC_FILES_CHKSUM = " \
-    file://LICENSE.LGPLv21;md5=58a180e1cf84c756c29f782b3a485c29 \
-    file://LICENSE.LGPLv3;md5=c4fe8c6de4eef597feec6e90ed62e962 \
-    file://LGPL_EXCEPTION.txt;md5=9625233da42f9e0ce9d63651a9d97654 \
+    file://LICENSE.LGPL3;md5=e6a600fd5e1d9cbde2d983680233ad02 \
+    file://LICENSE.GPL2;md5=b234ee4d69f5fce4486a80fdaf4a4263 \
+    file://LICENSE.GPL3;md5=d32239bcb673463ab874e80d47fae504 \
+    file://LICENSE.GPL3-EXCEPT;md5=763d8c535a234d9a3fb682c7ecb6c073 \
     file://LICENSE.FDL;md5=6d9f2a9af4c8b8c3c769f6cc1b6aaf7e \
 "
 
+inherit ptest
+
 DEPENDS += "qtbase qtdeclarative qtxmlpatterns"
 
+# Patches from https://github.com/meta-qt5/qttools/commits/b5.9
+# 5.9.meta-qt5.2
 SRC_URI += " \
-    file://0002-assistant-help-fix-linking-of-dependent-libraries.patch \
-    file://0003-add-noqtwebkit-configuration.patch \
+    file://run-ptest \
+    file://0001-add-noqtwebkit-configuration.patch \
+    file://0002-linguist-tools-cmake-allow-overriding-the-location-f.patch \
 "
 
-FILES_${PN}-tools += "${datadir}/${QT_DIR_NAME}/phrasebooks"
-FILES_${PN}-examples = "${datadir}/${QT_DIR_NAME}/examples"
+FILES_${PN}-tools += "${datadir}${QT_DIR_NAME}/phrasebooks"
+FILES_${PN}-examples = "${datadir}${QT_DIR_NAME}/examples"
 
 PACKAGECONFIG ??= ""
 PACKAGECONFIG[qtwebkit] = ",,qtwebkit"
 
-EXTRA_QMAKEVARS_PRE += "${@base_contains('PACKAGECONFIG', 'qtwebkit', '', 'CONFIG+=noqtwebkit', d)}"
+EXTRA_QMAKEVARS_PRE += "${@bb.utils.contains('PACKAGECONFIG', 'qtwebkit', '', 'CONFIG+=noqtwebkit', d)}"
 
-SRCREV = "33c65366a7c3901d2aecfde3dbc485e1eac5c10c"
+SRCREV = "fdc5749b5603653c5d0c59db267f44fd1609457e"
+
+BBCLASSEXTEND = "native nativesdk"
+
+do_compile_ptest() {
+    export PATH=${STAGING_DIR_NATIVE}/usr/include/qt5:$PATH
+    cd ${S}/tests
+    qmake -o Makefile tests.pro
+    oe_runmake
+}
+
+do_install_ptest() {
+    mkdir -p ${D}${PTEST_PATH}
+    t=${D}${PTEST_PATH}
+    cp ${S}/tests/auto/qtdiag/tst_tdiag $t
+    cp ${S}/tests/auto/qtattributionsscanner/tst_qtattributionsscanner $t
+}

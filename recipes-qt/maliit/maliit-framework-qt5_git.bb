@@ -4,15 +4,15 @@ HOMEPAGE = "https://wiki.maliit.org/Main_Page"
 LICENSE = "LGPLv2.1"
 LIC_FILES_CHKSUM = "file://LICENSE.LGPL;md5=5c917f6ce94ceb8d8d5e16e2fca5b9ad"
 
-inherit qmake5
+inherit qmake5 qmake5_paths
 
 SRC_URI = "git://github.com/maliit/framework.git;branch=master \
-    file://0001-Fix-MALIIT_INSTALL_PRF-to-allow-the-build-with-opene.patch \
-    file://maliit-server.desktop \
-    file://qt5.3-fix.patch \
-"
+           file://0001-Fix-MALIIT_INSTALL_PRF-to-allow-the-build-with-opene.patch \
+           file://maliit-server.desktop \
+           file://0001-config.pri-Use-O1-optimization-in-DEBUG-flags.patch \
+           "
 
-SRCREV = "17fdf8699c53ddfb2c15df8e11d46804e782fec5"
+SRCREV = "60b1b10de14f932420313c547ab801daf522d539"
 PV = "0.99.0+git${SRCPV}"
 
 
@@ -21,9 +21,6 @@ GTKIMMODULES_PACKAGES = "${PN}-gtk"
 
 DEPENDS = "qtdeclarative"
 
-# FIXME: Do we need something like this with qt5?
-#RDEPENDS_${PN} = "qt4-plugin-inputmethod-imsw-multi libqtsvg4"
-
 RRECOMMENDS_${PN} = "maliit-plugins-qt5"
 
 FILES_${PN} += "\
@@ -31,24 +28,26 @@ FILES_${PN} += "\
     ${bindir} \
     ${datadir}/applications/maliit-server.desktop \
     ${datadir}/dbus-1 \
+    ${OE_QMAKE_PATH_PLUGINS}/platforminputcontexts \
 "
 
 FILES_${PN}-dbg += "\
     ${libdir}/maliit-framework-tests \
+    ${OE_QMAKE_PATH_PLUGINS}/platforminputcontexts/.debug \
 "
 
 FILES_${PN}-dev += "\
     ${includedir}/maliit \
     ${libdir}/pkgconfig \
-    ${libdir}/qt5/mkspecs \
+    ${OE_QMAKE_PATH_QT_ARCHDATA}/mkspecs \
 "
 
 EXTRA_QMAKEVARS_PRE = "\
-    PREFIX=${prefix} \
-    LIBDIR=${libdir} \
-    DATADIR=${datadir} \
-    QT_IM_PLUGIN_PATH=${libdir}/qt4/plugins/inputmethods \
-    MALIIT_INSTALL_PRF=${QMAKE_MKSPEC_PATH}/mkspecs/features \
+    PREFIX=${OE_QMAKE_PATH_PREFIX} \
+    LIBDIR=${OE_QMAKE_PATH_LIBS} \
+    DATADIR=${OE_QMAKE_PATH_DATA} \
+    QT_INSTALL_PLUGINS=${OE_QMAKE_PATH_PLUGINS} \
+    MALIIT_INSTALL_PRF=${OE_QMAKE_PATH_QT_ARCHDATA}/mkspecs/features \
     SCHEMADIR=${sysconfdir}/gconf/schemas \
     CONFIG+=disable-gconf \
     CONFIG+=disable-gtk-cache-update \
@@ -57,14 +56,14 @@ EXTRA_QMAKEVARS_PRE = "\
     CONFIG+=nodoc \
     CONFIG+=noxcb \
     CONFIG+=enable-dbus-activation \
+    CONFIG+=qt5-inputcontext \
 "
-
 EXTRA_OEMAKE += "INSTALL_ROOT=${D}"
 
 do_install_append() {
     #Fix absolute paths
-    sed -i -e "s|/usr|${STAGING_DIR_TARGET}${prefix}|" ${D}/${libdir}/${QT_DIR_NAME}/mkspecs/features/maliit-framework.prf
-    sed -i -e "s|/usr|${STAGING_DIR_TARGET}${prefix}|" ${D}/${libdir}/${QT_DIR_NAME}/mkspecs/features/maliit-plugins.prf
+    sed -i -e "s|/usr|${STAGING_DIR_TARGET}${prefix}|" ${D}/${OE_QMAKE_PATH_QT_ARCHDATA}/mkspecs/features/maliit-framework.prf
+    sed -i -e "s|/usr|${STAGING_DIR_TARGET}${prefix}|" ${D}/${OE_QMAKE_PATH_QT_ARCHDATA}/mkspecs/features/maliit-plugins.prf
 
     install -d ${D}${datadir}/applications
     install -m 644 ${WORKDIR}/maliit-server.desktop ${D}${datadir}/applications
